@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+  :root {
+    --background: 264 10% 9%;
+    --foreground: 0 0% 98%;
+    --card: 264 12% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 264 10% 9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 263 87% 71%;
+    --primary-foreground: 264 10% 9%;
+    --secondary: 264 12% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 264 12% 16%;
+    --muted-foreground: 264 5% 70%;
+    --accent: 182 97% 67%;
+    --accent-foreground: 264 10% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 264 12% 20%;
+    --input: 264 12% 20%;
+    --ring: 263 87% 71%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground selection:bg-primary/30;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+.glass-card {
+  @apply bg-card/60 backdrop-blur-xl border border-white/5 shadow-2xl;
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#6366F1] to-[#06B6D4];
+}
+
+.glow-hover {
+  @apply transition-all duration-300;
+}
+
+.glow-hover:hover {
+  @apply shadow-[0_0_20px_rgba(166,115,247,0.4)] border-primary/50;
+}
