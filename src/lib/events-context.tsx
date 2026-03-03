@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -107,8 +106,6 @@ type EventsContextType = {
   events: Event[];
   isLoading: boolean;
   bookEvent: (id: string, quantity: number) => Promise<boolean>;
-  isAuthenticated: boolean;
-  setIsAuthenticated: (val: boolean) => void;
 };
 
 const EventsContext = createContext<EventsContextType | undefined>(undefined);
@@ -116,10 +113,8 @@ const EventsContext = createContext<EventsContextType | undefined>(undefined);
 export function EventsProvider({ children }: { children: React.ReactNode }) {
   const [events, setEvents] = useState<Event[]>(initialEvents);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Simulate initial fetch
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -127,21 +122,18 @@ export function EventsProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const bookEvent = async (id: string, quantity: number): Promise<boolean> => {
-    // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));
-
     const event = events.find(e => e.id === id);
     if (!event || event.seatsAvailable < quantity) return false;
 
     setEvents(prev => prev.map(e => 
       e.id === id ? { ...e, seatsAvailable: e.seatsAvailable - quantity } : e
     ));
-    
     return true;
   };
 
   return (
-    <EventsContext.Provider value={{ events, isLoading, bookEvent, isAuthenticated, setIsAuthenticated }}>
+    <EventsContext.Provider value={{ events, isLoading, bookEvent }}>
       {children}
     </EventsContext.Provider>
   );

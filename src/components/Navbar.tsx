@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useEvents } from '@/lib/events-context';
+import { useAuth } from '@/context/AuthContext';
 import { LoginModal } from './LoginModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const { isAuthenticated, setIsAuthenticated } = useEvents();
+  const { user, logout, isAuthenticated } = useAuth();
   const pathname = usePathname();
 
   const navLinks = [
@@ -54,9 +54,9 @@ export const Navbar = () => {
               <div className="flex items-center gap-4 ml-4">
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-full border border-white/5">
                   <User className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">Alex Chen</span>
+                  <span className="text-sm font-medium">{user}</span>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setIsAuthenticated(false)}>
+                <Button variant="ghost" size="icon" onClick={logout}>
                   <LogOut className="w-5 h-5 text-muted-foreground" />
                 </Button>
               </div>
@@ -99,9 +99,15 @@ export const Navbar = () => {
               ))}
               <div className="pt-4 pb-2 border-t border-white/5">
                 {isAuthenticated ? (
-                  <Button variant="outline" className="w-full justify-start gap-2" onClick={() => setIsAuthenticated(false)}>
-                    <LogOut className="w-4 h-4" /> Sign Out
-                  </Button>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 px-3 py-2 text-muted-foreground">
+                      <User className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-medium">{user}</span>
+                    </div>
+                    <Button variant="outline" className="w-full justify-start gap-2" onClick={logout}>
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </Button>
+                  </div>
                 ) : (
                   <Button className="w-full" onClick={() => setIsLoginModalOpen(true)}>Sign In</Button>
                 )}

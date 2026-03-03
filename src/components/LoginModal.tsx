@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useEvents } from '@/lib/events-context';
+import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Mail, Lock, User } from 'lucide-react';
 
@@ -16,18 +16,26 @@ interface LoginModalProps {
 }
 
 export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
-  const { setIsAuthenticated } = useEvents();
+  const { login } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent, type: 'login' | 'signup') => {
     e.preventDefault();
     setIsLoading(true);
     // Simulate auth delay
     await new Promise(r => setTimeout(r, 1000));
     setIsLoading(false);
-    setIsAuthenticated(true);
-    toast({ title: "Welcome back!", description: "You are now logged in." });
+    
+    // Use entered name for signup, or email prefix as fallback for login
+    const nameToUse = type === 'signup' ? formData.name : (formData.email.split('@')[0] || 'Member');
+    
+    login(nameToUse);
+    toast({ 
+      title: type === 'login' ? "Welcome back!" : "Account created!", 
+      description: `You are now logged in as ${nameToUse}.` 
+    });
     onClose();
   };
 
@@ -71,7 +79,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
             </TabsList>
 
             <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={(e) => handleAuth(e, 'login')} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email-login" className="text-sm font-semibold">Email</Label>
                   <div className="relative">
@@ -82,6 +90,8 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                       placeholder="name@example.com" 
                       className="pl-11 h-12 w-full text-base rounded-xl bg-zinc-950 border-white/10 focus:ring-2 focus:ring-primary/20 transition-all" 
                       required 
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
                   </div>
                 </div>
@@ -105,7 +115,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
             </TabsContent>
 
             <TabsContent value="signup">
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={(e) => handleAuth(e, 'signup')} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name-signup" className="text-sm font-semibold">Full Name</Label>
                   <div className="relative">
@@ -115,6 +125,8 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                       placeholder="Alex Chen" 
                       className="pl-11 h-12 w-full text-base rounded-xl bg-zinc-950 border-white/10 focus:ring-2 focus:ring-primary/20 transition-all" 
                       required 
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                   </div>
                 </div>
@@ -128,6 +140,8 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                       placeholder="name@example.com" 
                       className="pl-11 h-12 w-full text-base rounded-xl bg-zinc-950 border-white/10 focus:ring-2 focus:ring-primary/20 transition-all" 
                       required 
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
                   </div>
                 </div>
